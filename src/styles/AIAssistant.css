@@ -1,0 +1,118 @@
+.ai-assistant {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(81, 226, 255, 0.1);
+    overflow: hidden;
+  }
+  
+  .ai-header {
+    background-color: #3d9dfd;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .ai-badge {
+    background-color: rgba(237, 137, 78, 0.847);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+  }
+  
+  .messages-container {
+    height: 300px;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: #f0f2f5;
+  }
+  
+  .message {
+    margin-bottom: 10px;
+    display: flex;
+  }
+  
+  .user-message {
+    justify-content: flex-end;
+  }
+  
+  .ai-message {
+    justify-content: flex-start;
+  }
+  
+  .message-content {
+    max-width: 80%;
+    padding: 10px;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .user-message .message-content {
+    background-color: #e6f2ff;
+  }
+  
+  .typing-indicator {
+    display: flex;
+    align-items: center;
+  }
+  
+  .dot {
+    height: 6px;
+    width: 6px;
+    background-color: #bbb;
+    border-radius: 50%;
+    margin: 0 3px;
+    animation: typing 1.4s infinite;
+  }
+  
+  @keyframes typing {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+  
+  .contextual-hint {
+    background-color: #a0d9ff;
+    color: rgba(0, 0, 0, 0.789);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .hint-icon {
+    margin-right: 10px;
+    font-size: 1.2rem;
+  }
+  
+  .question-form {
+    display: flex;
+    padding: 15px;
+    background-color: white;
+    border-top: 1px solid #e0e0e0;
+  }
+  
+  .question-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-right: 10px;
+  }
+  
+  .send-button {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .send-button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+  }

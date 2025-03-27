@@ -1,29 +1,50 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ChemistryEquipment from './ChemistryEquipment';
 import '../../styles/experiments.css';
+import '../../styles/select-style.css';
 
 function Titration() {
+  // Predefined solution options
+  const buretteSolutions = [
+    { name: 'NaOH (0.1M)', concentration: 0.1 },
+    { name: 'NaOH (0.5M)', concentration: 0.5 },
+    { name: 'KOH (0.1M)', concentration: 0.1 }
+  ];
+
+  const flaskSolutions = [
+    { name: 'HCl (0.1M)', concentration: 0.1 },
+    { name: 'HCl (0.5M)', concentration: 0.5 },
+    { name: 'H2SO4 (0.1M)', concentration: 0.1 }
+  ];
+
+  const indicators = [
+    'Phenolphthalein',
+    'Methyl Orange',
+    'Bromothymol Blue'
+  ];
+
   const [burette, setBurette] = useState({
     initialVolume: 50.0,
     currentVolume: 50.0,
-    solution: 'NaOH (0.1M)',
+    solution: buretteSolutions[0],
     isFlowing: false
   });
   
   const [flask, setFlask] = useState({
     volume: 100,
-    solution: 'HCl (0.1M)',
-    indicator: 'Phenolphthalein',
+    solution: flaskSolutions[0],
+    indicator: indicators[0],
     color: 'clear',
     endpointReached: false
   });
   
-  const [experimentStatus, setExperimentStatus] = useState('setup'); // setup, running, completed
+  const [experimentStatus, setExperimentStatus] = useState('setup');
   const [timerRunning, setTimerRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [dropSpeed, setDropSpeed] = useState(200); // milliseconds between drops
   const timerRef = useRef(null);
   
-  // Endpoint is when 25mL of NaOH has been added (for this simplified experiment)
+  // Endpoint is when 25mL of base has been added (for this simplified experiment)
   const endpointVolume = 25.0;
   
   useEffect(() => {
@@ -57,11 +78,11 @@ function Titration() {
           
           return { ...prev, currentVolume: newVolume };
         });
-      }, 200);
+      }, dropSpeed);
       
       return () => clearInterval(interval);
     }
-  }, [burette.isFlowing]);
+  }, [burette.isFlowing, dropSpeed]);
   
   const updateFlaskColor = (volumeAdded) => {
     let newColor = 'clear';
@@ -92,9 +113,6 @@ function Titration() {
   };
   
   const handleStop = () => {
-    const volumeAdded = burette.initialVolume - burette.currentVolume;
-    const errorPercentage = Math.abs((volumeAdded - endpointVolume) / endpointVolume * 100).toFixed(2);
-    
     setBurette(prev => ({ ...prev, isFlowing: false }));
     setTimerRunning(false);
     setExperimentStatus('completed');
@@ -104,14 +122,14 @@ function Titration() {
     setBurette({
       initialVolume: 50.0,
       currentVolume: 50.0,
-      solution: 'NaOH (0.1M)',
+      solution: buretteSolutions[0],
       isFlowing: false
     });
     
     setFlask({
       volume: 100,
-      solution: 'HCl (0.1M)',
-      indicator: 'Phenolphthalein',
+      solution: flaskSolutions[0],
+      indicator: indicators[0],
       color: 'clear',
       endpointReached: false
     });
@@ -150,17 +168,88 @@ function Titration() {
         <div className="experiment-info">
           <h3>Acid-Base Titration</h3>
           <p>Goal: Determine the endpoint of titration by observing the color change.</p>
-          <div className="solution-info">
-            <div>
-              <span className="label">Burette Solution:</span>
-              <span>{burette.solution}</span>
+          
+          {/* Solution Selection Dropdowns */}
+          <div className="solution-selection">
+            <div className="solution-dropdown">
+              <label htmlFor="burette-solution">Burette Solution:</label>
+              <div className="custom-select">
+                <select 
+                  id="burette-solution"
+                  value={burette.solution.name} 
+                  onChange={(e) => setBurette(prev => ({
+                    ...prev, 
+                    solution: buretteSolutions.find(sol => sol.name === e.target.value)
+                  }))}
+                  disabled={experimentStatus !== 'setup'}
+                >
+                  {buretteSolutions.map((sol) => (
+                    <option key={sol.name} value={sol.name}>
+                      {sol.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div>
-              <span className="label">Flask Solution:</span>
-              <span>{flask.solution} with {flask.indicator}</span>
+            
+            <div className="solution-dropdown">
+              <label htmlFor="flask-solution">Flask Solution:</label>
+              <div className="custom-select">
+                <select 
+                  id="flask-solution"
+                  value={flask.solution.name} 
+                  onChange={(e) => setFlask(prev => ({
+                    ...prev, 
+                    solution: flaskSolutions.find(sol => sol.name === e.target.value)
+                  }))}
+                  disabled={experimentStatus !== 'setup'}
+                >
+                  {flaskSolutions.map((sol) => (
+                    <option key={sol.name} value={sol.name}>
+                      {sol.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            <div className="solution-dropdown">
+              <label htmlFor="indicator">Indicator:</label>
+              <div className="custom-select">
+                <select 
+                  id="indicator"
+                  value={flask.indicator} 
+                  onChange={(e) => setFlask(prev => ({
+                    ...prev, 
+                    indicator: e.target.value
+                  }))}
+                  disabled={experimentStatus !== 'setup'}
+                >
+                  {indicators.map((ind) => (
+                    <option key={ind} value={ind}>
+                      {ind}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         </div>
+        
+        {/* Drop Speed Control */}
+        {experimentStatus === 'setup' && (
+          <div className="drop-speed-control">
+            <label>Drop Speed (ms between drops):</label>
+            <input 
+              type="range" 
+              min="50" 
+              max="1000" 
+              value={dropSpeed}
+              onChange={(e) => setDropSpeed(Number(e.target.value))}
+            />
+            <span>{dropSpeed} ms</span>
+          </div>
+        )}
         
         <div className="control-buttons">
           {experimentStatus === 'setup' && (

@@ -1,102 +1,121 @@
 /* src/styles/about.css */
+:root {
+  --pastel-blue-light: #E6F2FF;
+  --pastel-blue-medium: #B0D4F0;
+  --pastel-blue-dark: #7AB0E0;
+  --text-color-dark: #2c3e50;
+  --background-translucent: rgba(255, 255, 255, 0.8);
+  --border-radius: 20px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
 .about-page {
-    background-color: white;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-  }
-  
-  .about-header {
-    padding: 60px 20px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    text-align: center;
-  }
-  
+  background-color: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.about-header {
+  padding: 60px 20px;
+  background: linear-gradient(135deg, var(--pastel-blue-dark), var(--pastel-blue-medium));
+  color: white;
+  text-align: center;
+}
+
+.about-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  letter-spacing: -1px;
+  color: white;
+}
+
+.about-tagline {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.about-mission,
+.about-how-it-works,
+.about-team,
+.about-future {
+  padding: 50px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about-mission {
+  border-bottom: 1px solid #eee;
+}
+
+.about-mission h2,
+.about-how-it-works h2,
+.about-team h2,
+.about-future h2 {
+  color: var(--pastel-blue-dark);
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.about-mission p,
+.about-team p,
+.about-future p {
+  margin-bottom: 20px;
+  line-height: 1.7;
+  color: var(--text-color-dark);
+}
+
+.how-it-works-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.step {
+  text-align: center;
+  padding: 20px;
+  border-radius: var(--border-radius);
+  background-color: var(--pastel-blue-light);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.step:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background-color: var(--pastel-blue-dark);
+  color: white;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 auto 15px;
+}
+
+.step h3 {
+  margin-bottom: 10px;
+  color: var(--text-color-dark);
+}
+
+.about-team,
+.about-future {
+  background-color: var(--pastel-blue-light);
+}
+
+@media (max-width: 768px) {
   .about-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
+    font-size: 2rem;
   }
-  
-  .about-tagline {
-    font-size: 1.2rem;
-    opacity: 0.9;
-  }
-  
-  .about-mission,
-  .about-how-it-works,
-  .about-team,
-  .about-future {
-    padding: 50px 20px;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  .about-mission {
-    border-bottom: 1px solid #eee;
-  }
-  
-  .about-mission h2,
-  .about-how-it-works h2,
-  .about-team h2,
-  .about-future h2 {
-    color: var(--primary-color);
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-  }
-  
-  .about-mission p,
-  .about-team p,
-  .about-future p {
-    margin-bottom: 20px;
-    line-height: 1.7;
-  }
-  
+
   .how-it-works-steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 30px;
-    margin-top: 30px;
+    grid-template-columns: 1fr;
   }
-  
-  .step {
-    text-align: center;
-    padding: 20px;
-    border-radius: var(--border-radius);
-    background-color: #f8f9fa;
-    box-shadow: var(--shadow);
-  }
-  
-  .step-number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    background-color: var(--primary-color);
-    color: white;
-    border-radius: 50%;
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin: 0 auto 15px;
-  }
-  
-  .step h3 {
-    margin-bottom: 10px;
-    color: var(--secondary-color);
-  }
-  
-  .about-team,
-  .about-future {
-    background-color: #f8f9fa;
-  }
-  
-  @media (max-width: 768px) {
-    .about-header h1 {
-      font-size: 2rem;
-    }
-  
-    .how-it-works-steps {
-      grid-template-columns: 1fr;
-    }
-  }
+}

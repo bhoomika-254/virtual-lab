@@ -14,6 +14,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ExperimentList from './pages/ExperimentList';
 import { generateAIResponse } from './utils/aiHelpers';
 import { getGeminiResponse, generateGeminiPrompt } from './utils/geminiService';
 import './styles/main.css';
@@ -175,7 +176,7 @@ function App() {
 
   return (
     <Router>
-      <div className="app">
+      <div className="app h-screen w-screen flex flex-col overflow-hidden">
         <NavBar isLoggedIn={isLoggedIn} onLogout={handleLogout} username={currentUser?.username} />
         <main className="main-content">
           <Routes>
@@ -184,6 +185,10 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
             <Route path="/register" element={<Register onRegister={handleRegister} />} />
+            <Route 
+              path="/experiments" 
+              element={isLoggedIn ? <ExperimentList experiments={experiments} /> : <Navigate to="/login" />} 
+            />
             <Route 
               path="/lab" 
               element={isLoggedIn ? <LabContent /> : <Navigate to="/login" />} 

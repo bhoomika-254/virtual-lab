@@ -1,28 +1,45 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ChemistryEquipment from './ChemistryEquipment';
 import '../../styles/experiments.css';
+import '../../styles/select-style.css';
 
 function Permanganometry() {
+  // Predefined solution options
+  const burretteSolutions = [
+    { id: 'kmno4', label: 'KMnO₄ (0.02M)', molarity: 0.02 },
+    { id: 'k2cr2o7', label: 'K₂Cr₂O₇ (0.1M)', molarity: 0.1 },
+    { id: 'sodium-thiosulfate', label: 'Na₂S₂O₃ (0.1M)', molarity: 0.1 }
+  ];
+
+  const flaskSolutions = [
+    { id: 'fe2', label: 'Fe²⁺ (0.1M) in H₂SO₄', molarity: 0.1 },
+    { id: 'oxalate', label: 'Oxalate (0.05M)', molarity: 0.05 },
+    { id: 'iodide', label: 'KI (0.1M)', molarity: 0.1 }
+  ];
+
   const [burette, setBurette] = useState({
     initialVolume: 50.0,
     currentVolume: 50.0,
-    solution: 'KMnO₄ (0.02M)',
-    isFlowing: false
+    solution: burretteSolutions[0],
+    isFlowing: false,
+    dropSpeed: 1, // Default speed
+    drops: [] // New state to track drops
   });
   
   const [flask, setFlask] = useState({
     volume: 100,
-    solution: 'Fe²⁺ (0.1M) in H₂SO₄',
+    solution: flaskSolutions[0],
     color: 'clear',
     endpointReached: false
   });
   
-  const [experimentStatus, setExperimentStatus] = useState('setup'); // setup, running, completed
+  const [experimentStatus, setExperimentStatus] = useState('setup');
   const [timerRunning, setTimerRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
   const timerRef = useRef(null);
+  const dropContainerRef = useRef(null);
   
-  // Endpoint is when 20mL of KMnO₄ has been added (for this simplified experiment)
+  // Endpoint is when 20mL of titrant has been added (for this simplified experiment)
   const endpointVolume = 20.0;
   
   useEffect(() => {
@@ -41,8 +58,28 @@ function Permanganometry() {
     if (burette.isFlowing) {
       const interval = setInterval(() => {
         setBurette(prev => {
-          const newVolume = Math.max(prev.currentVolume - 0.1, 0);
+          // Adjust flow rate based on drop speed
+          const volumeDecrement = 0.1 * prev.dropSpeed;
+          const newVolume = Math.max(prev.currentVolume - volumeDecrement, 0);
           const volumeAdded = prev.initialVolume - newVolume;
+          
+          // Create a new drop
+          const newDrop = {
+            id: Date.now(),
+            color: prev.solution.id === 'kmno4' ? 'purple' : 'blue',
+            speed: prev.dropSpeed
+          };
+          
+          // Update drops array
+          const updatedDrops = [
+            ...prev.drops, 
+            newDrop
+          ];
+          
+          // Remove old drops to prevent memory buildup
+          if (updatedDrops.length > 50) {
+            updatedDrops.shift();
+          }
           
           // Update flask color based on volume added
           updateFlaskColor(volumeAdded);
@@ -51,16 +88,25 @@ function Permanganometry() {
           if (newVolume <= 0) {
             setExperimentStatus('completed');
             setTimerRunning(false);
-            return { ...prev, currentVolume: 0, isFlowing: false };
+            return { 
+              ...prev, 
+              currentVolume: 0, 
+              isFlowing: false,
+              drops: [] 
+            };
           }
           
-          return { ...prev, currentVolume: newVolume };
+          return { 
+            ...prev, 
+            currentVolume: newVolume,
+            drops: updatedDrops 
+          };
         });
       }, 200);
       
       return () => clearInterval(interval);
     }
-  }, [burette.isFlowing]);
+  }, [burette.isFlowing, burette.dropSpeed]);
   
   const updateFlaskColor = (volumeAdded) => {
     let newColor = 'clear';
@@ -68,7 +114,7 @@ function Permanganometry() {
     
     // The permanganate initially decolorizes when added to the Fe²⁺ solution
     if (volumeAdded > 0 && volumeAdded < endpointVolume - 1) {
-      newColor = 'very-light-yellow'; // Fe³⁺ formation gives slight yellow color
+      newColor = 'very-light-yellow';
     } 
     // Just before the endpoint, we might see a flash of pink that quickly disappears
     else if (volumeAdded >= endpointVolume - 1 && volumeAdded < endpointVolume) {
@@ -104,13 +150,15 @@ function Permanganometry() {
     setBurette({
       initialVolume: 50.0,
       currentVolume: 50.0,
-      solution: 'KMnO₄ (0.02M)',
-      isFlowing: false
+      solution: burretteSolutions[0],
+      isFlowing: false,
+      dropSpeed: 1,
+      drops: []
     });
     
     setFlask({
       volume: 100,
-      solution: 'Fe²⁺ (0.1M) in H₂SO₄',
+      solution: flaskSolutions[0],
       color: 'clear',
       endpointReached: false
     });
@@ -118,6 +166,20 @@ function Permanganometry() {
     setExperimentStatus('setup');
     setTimerRunning(false);
     setElapsedTime(0);
+  };
+  
+  const handleBurretteSolutionChange = (e) => {
+    const selectedSolution = burretteSolutions.find(sol => sol.id === e.target.value);
+    setBurette(prev => ({ ...prev, solution: selectedSolution }));
+  };
+  
+  const handleFlaskSolutionChange = (e) => {
+    const selectedSolution = flaskSolutions.find(sol => sol.id === e.target.value);
+    setFlask(prev => ({ ...prev, solution: selectedSolution }));
+  };
+  
+  const handleDropSpeedChange = (e) => {
+    setBurette(prev => ({ ...prev, dropSpeed: parseFloat(e.target.value) }));
   };
   
   const calculateResults = () => {
@@ -135,8 +197,9 @@ function Permanganometry() {
       accuracy = 'Very good';
     }
     
-    // Calculate Fe²⁺ concentration based on redox equation: MnO₄⁻ + 5Fe²⁺ + 8H⁺ → Mn²⁺ + 5Fe³⁺ + 4H₂O
-    const permanganateMoles = (volumeAdded * 0.02) / 1000; // moles = volume (L) * molarity
+    // Calculate concentration based on redox equation
+    const volumeAdded_L = volumeAdded / 1000;
+    const permanganateMoles = (volumeAdded_L * burette.solution.molarity);
     const ferrusMoles = permanganateMoles * 5; // 1 mol KMnO₄ reacts with 5 mol Fe²⁺
     const ferrusConcentration = (ferrusMoles / 0.1).toFixed(4); // 100 mL = 0.1 L solution
     
@@ -149,22 +212,76 @@ function Permanganometry() {
     };
   };
   
+  const renderDrops = () => {
+    return burette.drops.map(drop => (
+      <div 
+        key={drop.id} 
+        className="drop" 
+        style={{
+          backgroundColor: drop.color,
+          animationDuration: `${1.5 / drop.speed}s`,
+          opacity: drop.speed === 5 ? 0.7 : 1
+        }}
+      />
+    ));
+  };
+
   return (
     <div className="titration-experiment">
       <div className="experiment-controls">
         <div className="experiment-info">
           <h3>Permanganometry Redox Titration</h3>
           <p>Goal: Determine Fe²⁺ concentration by titrating with KMnO₄ until a persistent pink color appears.</p>
-          <div className="solution-info">
-            <div>
-              <span className="label">Burette Solution:</span>
-              <span>{burette.solution}</span>
+          
+          <div className="solution-selection">
+            <div className="solution-select">
+              <label htmlFor="burette-solution">Burette Solution:</label>
+              <select 
+                id="burette-solution" 
+                value={burette.solution.id}
+                onChange={handleBurretteSolutionChange}
+                disabled={experimentStatus !== 'setup'}
+              >
+                {burretteSolutions.map(sol => (
+                  <option key={sol.id} value={sol.id}>
+                    {sol.label}
+                  </option>
+                ))}
+              </select>
             </div>
-            <div>
-              <span className="label">Flask Solution:</span>
-              <span>{flask.solution}</span>
+            
+            <div className="solution-select">
+              <label htmlFor="flask-solution">Flask Solution:</label>
+              <select 
+                id="flask-solution" 
+                value={flask.solution.id}
+                onChange={handleFlaskSolutionChange}
+                disabled={experimentStatus !== 'setup'}
+              >
+                {flaskSolutions.map(sol => (
+                  <option key={sol.id} value={sol.id}>
+                    {sol.label}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
+          
+          {experimentStatus === 'running' && (
+            <div className="drop-speed-control">
+              <label htmlFor="drop-speed">Drop Speed:</label>
+              <select 
+                id="drop-speed" 
+                value={burette.dropSpeed}
+                onChange={handleDropSpeedChange}
+              >
+                <option value={0.5}>Very Slow</option>
+                <option value={1}>Normal</option>
+                <option value={2}>Fast</option>
+                <option value={5}>Very Fast</option>
+              </select>
+            </div>
+          )}
         </div>
         
         <div className="control-buttons">
@@ -205,6 +322,10 @@ function Permanganometry() {
             <span className="reading-label">Time Elapsed:</span>
             <span className="reading-value">{elapsedTime.toFixed(1)} s</span>
           </div>
+        </div>
+        
+        <div className="drop-container" ref={dropContainerRef}>
+          {burette.isFlowing && renderDrops()}
         </div>
         
         {experimentStatus === 'completed' && (
