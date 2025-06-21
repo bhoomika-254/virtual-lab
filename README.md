@@ -23,3 +23,22 @@
 | Gemini AI    | LLM-powered chatbot for Q&A          |
 | HTML, CSS & Animations | Layout and Advanced UI interactions         |
 | Git and Github | Continuous Integration, Continuous Deployment         |
+
+# Included Experiments 🧪:
+
+- Chemistry 🧫:
+
+1. **Acid-Base Titration**  
+   Simulate acid-base neutralization with visual burette and flask animations.
+
+2. **Permanganometry**  
+   Redox titration using KMnO₄ for unknown concentration calculation.
+
+- Physics 🔭:
+
+1. **Simple Pendulum**  
+   Measure gravitational acceleration by timing oscillations.
+
+2. **Spring Oscillation**  
+   Simulate Hooke’s Law with adjustable mass and spring constants.
+
