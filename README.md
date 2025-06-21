@@ -20,7 +20,6 @@
 |--------------|--------------------------------------|
 | React        | Frontend UI and interactivity        |
 | Node.js      | Backend server and APIs              |
-| Express.js   | Server framework                     |
 | Gemini AI    | LLM-powered chatbot for Q&A          |
 | HTML, CSS & Animations | Layout and Advanced UI interactions         |
 | Git and Github | Continuous Integration, Continuous Deployment         |
