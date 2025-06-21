@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 :root {
   --pastel-blue-lightest: #E6F2FF;
   --pastel-blue-light: #B0D4F0;
@@ -123,3 +124,23 @@
     flex-wrap: wrap;
   }
 }
+
+/* src/styles/footer.css */
+.footer {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .footer p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
