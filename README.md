@@ -5,7 +5,7 @@
 
 # link - https://virtualab.netlify.app/
 
-# Features :
+# Features 🚀:
 - **AI Chatbot Assistant**  - Instant help and answers to conceptual questions related to the experiment via **Gemini AI integration**.
 
 - **Experiment Simulations** - Realistic, interactive lab simulations with dynamic input controls and data visualization.
@@ -14,7 +14,7 @@
 
 - **Crazy Animations & UI Effects** - Built with **React and CSS**, the UI is full of smooth, responsive, and educational animations to enhance learning.
 
-# Tech Stack 🚀:
+# Tech Stack 🛠️:
 
 | Tech         | Purpose                              |
 |--------------|--------------------------------------|
